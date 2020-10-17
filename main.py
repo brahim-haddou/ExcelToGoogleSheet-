@@ -1,5 +1,4 @@
-import os
-from functions import Create_Service
+from functions import create_service
 
 
 CLIENT_SECRET_FILE = 'code_secret_client.json'
@@ -7,10 +6,11 @@ API_SERVICE_NAME = 'sheets'
 API_VERSION = 'v4'
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 
-service = Create_Service(CLIENT_SECRET_FILE, API_SERVICE_NAME, API_VERSION, SCOPES)
+service = create_service(CLIENT_SECRET_FILE, API_SERVICE_NAME, API_VERSION, SCOPES)
 
 # Spreadsheet file
 print("-------> creation of spreadsheet")
+
 
 ########################
 def create_spreadsheet():
@@ -21,30 +21,30 @@ def create_spreadsheet():
             'timeZone': 'Casablanca',
             'autoRecalc': 'HOUR'
         },
-        'sheets':[
+        'sheets': [
             {
-            'properties': {
+                'properties': {
                     'title': 'sheet 1'
-                }, 
+                },
             },
             {
-            'properties': {
+                'properties': {
                     'title': 'sheet 2'
-                }, 
+                },
             },
             {
-            'properties': {
+                'properties': {
                     'title': 'sheet 3'
-                }, 
+                },
             },
             {
-            'properties': {
+                'properties': {
                     'title': 'sheet 4'
-                }, 
+                },
             }
         ]
     }
-
+    
     spreadsheet = service.spreadsheets().create(body=spreadsheet).execute()
     print(spreadsheet)
 
@@ -52,25 +52,26 @@ def create_spreadsheet():
 ########################
 def update_spreadsheet():
     spreadsheet_id = '1UYhC84kcSwmS2qtFqdWrXF3MnJa9DtSMzw8Cirstavo'
-    my_spreadsheet = service.spreadsheets().get(spreadsheetId=spreadsheet_id).execute()
-
+    service.spreadsheets().get(spreadsheetId=spreadsheet_id).execute()
+    
     worksheet_name = 'sheet!'
     cell_range_insert = 'B2'
     values = (
-        ('col A','col B','col C','col D','col E'),
-        ('A1','B1','C1','D1','E1')
+        ('col A', 'col B', 'col C', 'col D', 'col E'),
+        ('A1', 'B1', 'C1', 'D1', 'E1')
     )
     value_range_body = {
         'majorDimension': 'ROWS',
         'values': values
     }
-
+    
     service.spreadsheets().values().update(
         spreadsheetId=spreadsheet_id,
         valueInputOption='USER_ENTERED',
-        range=worksheet_name+cell_range_insert,
+        range=worksheet_name + cell_range_insert,
         body=value_range_body
     ).execute()
+
 
 ########################
 def clear_spreadsheet():
@@ -79,29 +80,36 @@ def clear_spreadsheet():
         spreadsheetId=spreadsheet_id,
         range='sheet'
     ).execute()
+
+
 ########################
 def append_to_spreadsheet():
     spreadsheet_id = '1UYhC84kcSwmS2qtFqdWrXF3MnJa9DtSMzw8Cirstavo'
-    my_spreadsheet = service.spreadsheets().get(spreadsheetId=spreadsheet_id).execute()
-
+    service.spreadsheets().get(spreadsheetId=spreadsheet_id).execute()
+    
     worksheet_name = 'sheet!'
     cell_range_insert = 'B2'
     values = (
-        ('col A','col B','col C','col D','col E'),
-        ('A1','B1','C1','D1','E1')
+        ('col A', 'col B', 'col C', 'col D', 'col E'),
+        ('A1', 'B1', 'C1', 'D1', 'E1')
     )
     value_range_body = {
         'majorDimension': 'COLUMNS',
         'values': values
     }
-
+    
     service.spreadsheets().values().append(
         spreadsheetId=spreadsheet_id,
         valueInputOption='USER_ENTERED',
-        range=worksheet_name+cell_range_insert,
+        range=worksheet_name + cell_range_insert,
         body=value_range_body
     ).execute()
 
+
 if __name__ == "__main__":
-    append_to_spreadsheet()
-    
+    create_spreadsheet()
+    # import time
+    # print(time.tzname)
+    # import datetime
+    # tz_string = datetime.datetime.now(datetime.timezone.utc).astimezone().tzname()
+    # print(tz_string.split()[0])

@@ -1,4 +1,5 @@
 __pycache__
 .vscode
+.idea
 code_secret_client.json
 token_sheets_v4.pickle
