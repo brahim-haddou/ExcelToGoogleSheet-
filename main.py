@@ -1,6 +1,5 @@
 from functions import create_service
-from excelFunc import excel_file
-
+from excelFunc import excel_file, list_files
 
 CLIENT_SECRET_FILE = 'code_secret_client.json'
 API_SERVICE_NAME = 'sheets'
@@ -9,20 +8,22 @@ SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 
 service = create_service(CLIENT_SECRET_FILE, API_SERVICE_NAME, API_VERSION, SCOPES)
 
-# Spreadsheet file
-print("-------> creation of spreadsheet")
 
-
-########################
-def create_spreadsheet():
+def create_spreadsheet(title):
     import datetime
     tz_string = datetime.datetime.now(datetime.timezone.utc).astimezone().tzname()
     spreadsheet = {
         'properties': {
-            'title': 'progressing',
+            'title': title,
             'locale': 'en_US',
             'timeZone': tz_string.split()[0],
             'autoRecalc': 'HOUR'
+        },
+        'sheets': {
+            'properties': {
+                "sheetId": 0,
+                "title": 'sheet'
+            }
         }
     }
     response_c = service.spreadsheets().create(body=spreadsheet).execute()
@@ -87,12 +88,13 @@ def delete_sheet(gsheet_id):
 
 
 if __name__ == "__main__":
-    response = create_spreadsheet()
-    spreadsheetId = response['spreadsheetId']
-    Sheets, values = excel_file(r"C:\Users\Flex5\Documents\ExcelToGoogleSheet-\test.xlsx")
-    for i in range(len(Sheets)):
-        add_sheets(spreadsheetId, Sheets[i])
-        update_spreadsheet(spreadsheetId, Sheets[i], values[i])
-        print(Sheets[i], values[i])
-        
-    delete_sheet(spreadsheetId)
+    path = input()
+    f_names, f_dirs = list_files(path)
+    for j in range(len(f_names)):
+        response = create_spreadsheet(f_names[j])
+        spreadsheetId = response['spreadsheetId']
+        Sheets, values = excel_file(f_dirs[j])
+        for i in range(len(Sheets)):
+            add_sheets(spreadsheetId, Sheets[i])
+            update_spreadsheet(spreadsheetId, Sheets[i], values[i])
+        delete_sheet(spreadsheetId)
