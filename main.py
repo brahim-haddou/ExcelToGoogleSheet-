@@ -1,4 +1,5 @@
 from functions import create_service
+from excelFunc import excel_file
 
 
 CLIENT_SECRET_FILE = 'code_secret_client.json'
@@ -14,102 +15,84 @@ print("-------> creation of spreadsheet")
 
 ########################
 def create_spreadsheet():
+    import datetime
+    tz_string = datetime.datetime.now(datetime.timezone.utc).astimezone().tzname()
     spreadsheet = {
         'properties': {
-            'title': 'First google sheet file',
+            'title': 'progressing',
             'locale': 'en_US',
-            'timeZone': 'Casablanca',
+            'timeZone': tz_string.split()[0],
             'autoRecalc': 'HOUR'
-        },
-        'sheets': [
-            {
-                'properties': {
-                    'title': 'sheet 1'
-                },
-            },
-            {
-                'properties': {
-                    'title': 'sheet 2'
-                },
-            },
-            {
-                'properties': {
-                    'title': 'sheet 3'
-                },
-            },
-            {
-                'properties': {
-                    'title': 'sheet 4'
-                },
-            }
-        ]
+        }
     }
-    
-    spreadsheet = service.spreadsheets().create(body=spreadsheet).execute()
-    print(spreadsheet)
+    response_c = service.spreadsheets().create(body=spreadsheet).execute()
+    return response_c
 
 
-########################
-def update_spreadsheet():
-    spreadsheet_id = '1UYhC84kcSwmS2qtFqdWrXF3MnJa9DtSMzw8Cirstavo'
-    service.spreadsheets().get(spreadsheetId=spreadsheet_id).execute()
-    
-    worksheet_name = 'sheet!'
-    cell_range_insert = 'B2'
-    values = (
-        ('col A', 'col B', 'col C', 'col D', 'col E'),
-        ('A1', 'B1', 'C1', 'D1', 'E1')
-    )
+def add_sheets(gsheet_id, sheet_name):
+    try:
+        request_body = {
+            'requests': [{
+                'addSheet': {
+                    'properties': {
+                        'title': sheet_name,
+                    }
+                }
+            }]
+        }
+        
+        response_s = service.spreadsheets().batchUpdate(
+            spreadsheetId=gsheet_id,
+            body=request_body
+        ).execute()
+        
+        return response_s
+    except Exception as e:
+        print(e)
+
+
+def update_spreadsheet(gsheet_id, sheet_name, data):
     value_range_body = {
         'majorDimension': 'ROWS',
-        'values': values
+        'values': data
     }
     
-    service.spreadsheets().values().update(
-        spreadsheetId=spreadsheet_id,
+    response_u = service.spreadsheets().values().update(
+        spreadsheetId=gsheet_id,
         valueInputOption='USER_ENTERED',
-        range=worksheet_name + cell_range_insert,
+        range=sheet_name,
         body=value_range_body
     ).execute()
+    return response_u
 
 
-########################
-def clear_spreadsheet():
-    spreadsheet_id = '1UYhC84kcSwmS2qtFqdWrXF3MnJa9DtSMzw8Cirstavo'
-    service.spreadsheets().values().clear(
-        spreadsheetId=spreadsheet_id,
-        range='sheet'
-    ).execute()
-
-
-########################
-def append_to_spreadsheet():
-    spreadsheet_id = '1UYhC84kcSwmS2qtFqdWrXF3MnJa9DtSMzw8Cirstavo'
-    service.spreadsheets().get(spreadsheetId=spreadsheet_id).execute()
-    
-    worksheet_name = 'sheet!'
-    cell_range_insert = 'B2'
-    values = (
-        ('col A', 'col B', 'col C', 'col D', 'col E'),
-        ('A1', 'B1', 'C1', 'D1', 'E1')
-    )
-    value_range_body = {
-        'majorDimension': 'COLUMNS',
-        'values': values
-    }
-    
-    service.spreadsheets().values().append(
-        spreadsheetId=spreadsheet_id,
-        valueInputOption='USER_ENTERED',
-        range=worksheet_name + cell_range_insert,
-        body=value_range_body
-    ).execute()
+def delete_sheet(gsheet_id):
+    try:
+        request_body = {
+            'requests': [{
+                'deleteSheet': {
+                    'sheetId': 0
+                }
+            }]
+        }
+        
+        response_s = service.spreadsheets().batchUpdate(
+            spreadsheetId=gsheet_id,
+            body=request_body
+        ).execute()
+        
+        return response_s
+    except Exception as e:
+        print(e)
 
 
 if __name__ == "__main__":
-    create_spreadsheet()
-    # import time
-    # print(time.tzname)
-    # import datetime
-    # tz_string = datetime.datetime.now(datetime.timezone.utc).astimezone().tzname()
-    # print(tz_string.split()[0])
+    response = create_spreadsheet()
+    spreadsheetId = response['spreadsheetId']
+    Sheets, values = excel_file(r"C:\Users\Flex5\Documents\ExcelToGoogleSheet-\test.xlsx")
+    for i in range(len(Sheets)):
+        add_sheets(spreadsheetId, Sheets[i])
+        update_spreadsheet(spreadsheetId, Sheets[i], values[i])
+        print(Sheets[i], values[i])
+        
+    delete_sheet(spreadsheetId)
