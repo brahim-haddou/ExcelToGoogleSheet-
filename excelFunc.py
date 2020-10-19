@@ -1,21 +1,24 @@
 import xlrd
-import win32com.client as win32
 import os
 
 
 def excel_file(path):
     xls = xlrd.open_workbook(path, on_demand=True)
     sheets = xls.sheet_names()
-    del xls
-    
-    xlApp = win32.Dispatch('Excel.Application')
-    wb = xlApp.Workbooks.Open(path)
     data = []
-    for sheet in sheets:
-        ws = wb.Worksheets(sheet)
-        rngData = ws.Range('A1').CurrentRegion()
-        data.append(rngData)
-    wb.Close(True)
+    for s in xls.sheets():
+        values = []
+        for row in range(s.nrows):
+            col_value = []
+            for col in range(s.ncols):
+                value = s.cell(row, col).value
+                try:
+                    value = str(int(value))
+                except:
+                    pass
+                col_value.append(value)
+            values.append(col_value)
+        data.append(values)
     return sheets, data
 
 
