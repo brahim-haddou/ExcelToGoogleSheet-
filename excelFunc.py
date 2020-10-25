@@ -35,7 +35,7 @@ def list_files(path):
 
 
 if __name__ == "__main__":
-    excel_file = r"C:\Users\Flex5\Desktop\Test\test al.xlsx"
+    excel_file = r"C:\Users\Flex5\Desktop\Test\test alll.xlsx"
     import win32com.client as win32
     from pprint import pprint
     
@@ -45,18 +45,58 @@ if __name__ == "__main__":
     
     ws = wb.Worksheets("Sheet1")
     colors = []
+    Number_Format = []
+    Borders_V = []
+    Borders_C = []
+    Borders_LineStyle = []
+    Font_Name = []
+    Font_Size = []
+    Font_Color = []
     for i in range(1, 10):
         clr = []
+        Num_Format = []
+        Bor_V = []
+        Bor_C = []
+        Bor_LineStyle = []
+        Font_N = []
+        Font_S = []
+        Font_C = []
+        
         for j in range(1, 10):
-            ws.Cells(i, j).Value = i
             clr.append(ws.Cells(i, j).Interior.ColorIndex)
-            print(ws.Cells(i, j).NumberFormat)
-            print(ws.Cells(i, j).Borders.Value)
-            print(ws.Cells(i, j).Borders.Color)
-            print(ws.Cells(i, j).Font.Name)
-            print(ws.Cells(i, j).Font.Size)
-            print(ws.Cells(i, j).Font.Color)
-            print(ws.Cells(i, j).Borders.LineStyle)
-            print()
+            Num_Format.append(ws.Cells(i, j).NumberFormat)
+            Bor_V.append(ws.Cells(i, j).Borders.Value)
+            Bor_C.append(ws.Cells(i, j).Borders.Color)
+            Bor_LineStyle.append(ws.Cells(i, j).Borders.LineStyle)
+            Font_N.append(ws.Cells(i, j).Font.Name)
+            Font_S.append(ws.Cells(i, j).Font.Size)
+            Font_C.append(ws.Cells(i, j).Font.Color)
+            
         colors.append(clr)
+        Font_Color.append(Font_C)
+        Number_Format.append(Num_Format)
+        Borders_V.append(Bor_V)
+        Borders_C.append(Bor_C)
+        Borders_LineStyle.append(Bor_LineStyle)
+        Font_Name.append(Font_N)
+        Font_Size.append(Font_S)
+        
     pprint(colors)
+    pprint('')
+    pprint(Font_Color)
+    pprint('')
+    pprint(Number_Format)
+    pprint('')
+    pprint(Borders_V)
+    pprint('')
+    pprint(Borders_C)
+    pprint('')
+    pprint(Borders_LineStyle)
+    pprint('')
+    pprint(Font_Name)
+    pprint('')
+    pprint(Font_Size)
+    pprint('')
+    
+    del ws
+    del excel

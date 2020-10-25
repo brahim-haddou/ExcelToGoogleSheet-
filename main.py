@@ -7,7 +7,6 @@ API_VERSION = 'v4'
 SCOPES = ['https://www.googleapis.com/auth/drive', 'https://www.googleapis.com/auth/drive.file']
 
 service = create_service(CLIENT_SECRET_FILE, API_SERVICE_NAME, API_VERSION, SCOPES)
-print(service.permissions())
 
 
 def create_spreadsheet(title):
@@ -88,7 +87,6 @@ def delete_sheet(gsheet_id):
         print(e)
 
 
-"""
 if __name__ == "__main__":
     path = input()
     f_names, f_dirs = list_files(path)
@@ -100,4 +98,3 @@ if __name__ == "__main__":
             add_sheets(spreadsheetId, Sheets[i])
             update_spreadsheet(spreadsheetId, Sheets[i], values[i])
         delete_sheet(spreadsheetId)
-"""
