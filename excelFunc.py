@@ -1,25 +1,68 @@
 import xlrd
 import os
+import win32com.client as win32
 
 
 def excel_file(path):
     xls = xlrd.open_workbook(path, on_demand=True)
+    excel = win32.gencache.EnsureDispatch('Excel.Application')
+    
+    wb = excel.Workbooks.Open(path)
     sheets = xls.sheet_names()
-    data = []
+    sheets_data = []
+    sheets_BG_color = []
+    sheets_F_name = []
+    sheets_F_size = []
+    sheets_F_color = []
+    
     for s in xls.sheets():
+        ws = wb.Worksheets(s.name)
         values = []
+        colors = []
+        Font_Name = []
+        Font_Size = []
+        Font_Color = []
         for row in range(s.nrows):
             col_value = []
+            clr = []
+            Font_N = []
+            Font_S = []
+            Font_C = []
             for col in range(s.ncols):
+                print(row, col)
                 value = s.cell(row, col).value
+                C = ws.Cells(row+1, col+1).Interior.Color
+                R = C % 256
+                G = C // 256 % 256
+                B = C // 65536 % 256
+                c = [R, G, B]
+                clr.append(c)
+                Font_N.append(ws.Cells(row+1, col+1).Font.Name)
+                Font_S.append(ws.Cells(row+1, col+1).Font.Size)
+                C = ws.Cells(row+1, col+1).Font.Color
+                R = C % 256
+                G = C // 256 % 256
+                B = C // 65536 % 256
+                c = [R, G, B]
+                Font_C.append(c)
                 try:
                     value = str(int(value))
                 except:
                     pass
                 col_value.append(value)
+            
             values.append(col_value)
-        data.append(values)
-    return sheets, data
+            colors.append(clr)
+            Font_Name.append(Font_N)
+            Font_Size.append(Font_S)
+            Font_Color.append(Font_C)
+        
+        sheets_data.append(values)
+        sheets_BG_color.append(colors)
+        sheets_F_name.append(Font_Name)
+        sheets_F_size.append(Font_Size)
+        sheets_F_color.append(Font_Color)
+    return sheets, sheets_data, sheets_BG_color, sheets_F_name, sheets_F_size, sheets_F_color
 
 
 def list_files(path):
@@ -35,68 +78,12 @@ def list_files(path):
 
 
 if __name__ == "__main__":
-    excel_file = r"C:\Users\Flex5\Desktop\Test\test alll.xlsx"
-    import win32com.client as win32
     from pprint import pprint
     
-    excel = win32.gencache.EnsureDispatch('Excel.Application')
-    
-    wb = excel.Workbooks.Open(excel_file)
-    
-    ws = wb.Worksheets("Sheet1")
-    colors = []
-    Number_Format = []
-    Borders_V = []
-    Borders_C = []
-    Borders_LineStyle = []
-    Font_Name = []
-    Font_Size = []
-    Font_Color = []
-    for i in range(1, 10):
-        clr = []
-        Num_Format = []
-        Bor_V = []
-        Bor_C = []
-        Bor_LineStyle = []
-        Font_N = []
-        Font_S = []
-        Font_C = []
-        
-        for j in range(1, 10):
-            clr.append(ws.Cells(i, j).Interior.ColorIndex)
-            Num_Format.append(ws.Cells(i, j).NumberFormat)
-            Bor_V.append(ws.Cells(i, j).Borders.Value)
-            Bor_C.append(ws.Cells(i, j).Borders.Color)
-            Bor_LineStyle.append(ws.Cells(i, j).Borders.LineStyle)
-            Font_N.append(ws.Cells(i, j).Font.Name)
-            Font_S.append(ws.Cells(i, j).Font.Size)
-            Font_C.append(ws.Cells(i, j).Font.Color)
-            
-        colors.append(clr)
-        Font_Color.append(Font_C)
-        Number_Format.append(Num_Format)
-        Borders_V.append(Bor_V)
-        Borders_C.append(Bor_C)
-        Borders_LineStyle.append(Bor_LineStyle)
-        Font_Name.append(Font_N)
-        Font_Size.append(Font_S)
-        
-    pprint(colors)
-    pprint('')
-    pprint(Font_Color)
-    pprint('')
-    pprint(Number_Format)
-    pprint('')
-    pprint(Borders_V)
-    pprint('')
-    pprint(Borders_C)
-    pprint('')
-    pprint(Borders_LineStyle)
-    pprint('')
-    pprint(Font_Name)
-    pprint('')
-    pprint(Font_Size)
-    pprint('')
-    
-    del ws
-    del excel
+    sheets, sheets_data, sheets_BG_color, sheets_F_name, sheets_F_size, sheets_F_color = excel_file(r"C:\Users\Flex5\Desktop\Test\test alll.xlsx")
+    pprint(sheets)
+    pprint(sheets_data)
+    pprint(sheets_BG_color)
+    pprint(sheets_F_name)
+    pprint(sheets_F_size)
+    pprint(sheets_F_color)
