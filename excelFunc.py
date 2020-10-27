@@ -29,17 +29,16 @@ def excel_file(path):
             Font_S = []
             Font_C = []
             for col in range(s.ncols):
-                print(row, col)
                 value = s.cell(row, col).value
-                C = ws.Cells(row+1, col+1).Interior.Color
+                C = ws.Cells(row + 1, col + 1).Interior.Color
                 R = C % 256
                 G = C // 256 % 256
                 B = C // 65536 % 256
                 c = [R, G, B]
                 clr.append(c)
-                Font_N.append(ws.Cells(row+1, col+1).Font.Name)
-                Font_S.append(ws.Cells(row+1, col+1).Font.Size)
-                C = ws.Cells(row+1, col+1).Font.Color
+                Font_N.append(ws.Cells(row + 1, col + 1).Font.Name)
+                Font_S.append(ws.Cells(row + 1, col + 1).Font.Size)
+                C = ws.Cells(row + 1, col + 1).Font.Color
                 R = C % 256
                 G = C // 256 % 256
                 B = C // 65536 % 256
@@ -62,6 +61,9 @@ def excel_file(path):
         sheets_F_name.append(Font_Name)
         sheets_F_size.append(Font_Size)
         sheets_F_color.append(Font_Color)
+    wb.Close(True)
+    excel.Quit()
+    del xls
     return sheets, sheets_data, sheets_BG_color, sheets_F_name, sheets_F_size, sheets_F_color
 
 
@@ -78,12 +80,8 @@ def list_files(path):
 
 
 if __name__ == "__main__":
-    from pprint import pprint
-    
-    sheets, sheets_data, sheets_BG_color, sheets_F_name, sheets_F_size, sheets_F_color = excel_file(r"C:\Users\Flex5\Desktop\Test\test alll.xlsx")
-    pprint(sheets)
-    pprint(sheets_data)
-    pprint(sheets_BG_color)
-    pprint(sheets_F_name)
-    pprint(sheets_F_size)
-    pprint(sheets_F_color)
+    data = [['21']]
+    if data:
+        print("list is empty")
+    else:
+        print("true")
