@@ -1,12 +1,13 @@
 from functions import create_service
 from excelFunc import excel_file, list_files
 
-CLIENT_SECRET_FILE = 'code_secret_client.json'
+CLIENT_SECRET_FILE = 'code_secret_client.json.json'
 API_SERVICE_NAME = 'sheets'
-API_VERSION = 'v4'
-SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
+API_VERSION = 'v3'
+SCOPES = ['https://www.googleapis.com/auth/drive']
 
 service = create_service(CLIENT_SECRET_FILE, API_SERVICE_NAME, API_VERSION, SCOPES)
+print(service)
 
 
 def create_spreadsheet(title):
@@ -127,9 +128,9 @@ def update_cell(g_sheet_id, sheet_id, value, sheet_BG_color, sheet_F_name, sheet
                         "range": {
                             "sheetId": sheet_id,
                             "startRowIndex": l,
-                            "endRowIndex": l+1,
+                            "endRowIndex": l + 1,
                             "startColumnIndex": k,
-                            "endColumnIndex": k+1
+                            "endColumnIndex": k + 1
                         }
                     }
                 }
@@ -144,16 +145,23 @@ def update_cell(g_sheet_id, sheet_id, value, sheet_BG_color, sheet_F_name, sheet
 
 
 if __name__ == "__main__":
-    path = input()
+    path = input("enter the path : ")
+    fo_name = path.split('\\')[-1:][0]
     f_names, f_dirs = list_files(path)
-    for j in range(len(f_names)):
-        response = create_spreadsheet(f_names[j])
-        spreadsheetId = response['spreadsheetId']
-        Sheets, values, sheets_BG_color, sheets_F_name, sheets_F_size, sheets_F_color = excel_file(f_dirs[j])
-        for i in range(len(Sheets)):
-            response_sheet = add_sheets(spreadsheetId, Sheets[i])
-            w_sheet_id = response_sheet['replies'][0]['addSheet']['properties']['sheetId']
-            if values[i]:
-                update_cell(spreadsheetId, w_sheet_id, values[i], sheets_BG_color[i], sheets_F_name[i],
-                            sheets_F_size[i], sheets_F_color[i])
-        delete_sheet(spreadsheetId)
+    file_metadata = {
+        'name': 'Invoices',
+        'mimeType': 'application/vnd.google-apps.folder'
+    }
+    file = service.files().create(body=fo_name,
+                                  fields='id').execute()
+    # for j in range(len(f_names)):
+    #     response = create_spreadsheet(f_names[j])
+    #     spreadsheetId = response['spreadsheetId']
+    #     Sheets, values, sheets_BG_color, sheets_F_name, sheets_F_size, sheets_F_color = excel_file(f_dirs[j])
+    #     for i in range(len(Sheets)):
+    #         response_sheet = add_sheets(spreadsheetId, Sheets[i])
+    #         w_sheet_id = response_sheet['replies'][0]['addSheet']['properties']['sheetId']
+    #         if values[i]:
+    #             update_cell(spreadsheetId, w_sheet_id, values[i], sheets_BG_color[i], sheets_F_name[i],
+    #                         sheets_F_size[i], sheets_F_color[i])
+    #     delete_sheet(spreadsheetId)

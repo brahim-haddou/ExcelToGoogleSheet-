@@ -80,8 +80,12 @@ def list_files(path):
 
 
 if __name__ == "__main__":
-    data = [['21']]
-    if data:
-        print("list is empty")
-    else:
-        print("true")
+    from pprint import pprint
+    excel = win32.gencache.EnsureDispatch('Excel.Application')
+    wb = excel.Workbooks.Open(r'C:\Users\Flex5\Desktop\Test\test1.xlsx')
+    ws = wb.Worksheets("Sheet1")
+    pprint(ws.Cells(1, 1).Borders(1).LineStyle)
+    pprint(ws.Cells(1, 1).Borders(1).Weight)
+    pprint(ws.Cells(1, 1).Borders(1).Color)
+    wb.Close(True)
+    excel.Quit()

@@ -1,5 +1,6 @@
 __pycache__
 .vscode
+credentials.json
 .idea
 .idea/
 code_secret_client.json
