@@ -1,8 +1,9 @@
 from functions import create_service
 from excelFunc import excel_file, list_files
+from googleapiclient.http import MediaFileUpload
 
-CLIENT_SECRET_FILE = 'code_secret_client.json.json'
-API_SERVICE_NAME = 'sheets'
+CLIENT_SECRET_FILE = 'credentials.json'
+API_SERVICE_NAME = 'drive'
 API_VERSION = 'v3'
 SCOPES = ['https://www.googleapis.com/auth/drive']
 
@@ -148,12 +149,28 @@ if __name__ == "__main__":
     path = input("enter the path : ")
     fo_name = path.split('\\')[-1:][0]
     f_names, f_dirs = list_files(path)
-    file_metadata = {
-        'name': 'Invoices',
-        'mimeType': 'application/vnd.google-apps.folder'
+    from pprint import pprint
+    f_name = f_names[0]
+    f_dir = f_dirs[0]
+    print(f_dir, f_name)
+    folder_metadata = {
+        'mimeType': 'application/vnd.google-apps.folder',
+        'name': fo_name
     }
-    file = service.files().create(body=fo_name,
-                                  fields='id').execute()
+    folder = service.files().create(body=folder_metadata).execute()
+    folder_id = folder.get("id")
+    print(folder_id)
+    mime_type = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    file_metadata = {
+        "name": f_names[0],
+        "parents": [folder_id]
+    }
+    media = MediaFileUpload(f_dirs[0], mimetype=mime_type)
+    service.files().create(
+        body=file_metadata,
+        media_body=media,
+        fields='id'
+    ).execute()
     # for j in range(len(f_names)):
     #     response = create_spreadsheet(f_names[j])
     #     spreadsheetId = response['spreadsheetId']
