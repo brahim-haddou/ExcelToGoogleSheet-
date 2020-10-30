@@ -77,15 +77,3 @@ def list_files(path):
             f_names.append(f_name.split(".")[0])
             f_dirs.append(f_dir)
     return f_names, f_dirs
-
-
-if __name__ == "__main__":
-    from pprint import pprint
-    excel = win32.gencache.EnsureDispatch('Excel.Application')
-    wb = excel.Workbooks.Open(r'C:\Users\Flex5\Desktop\Test\test1.xlsx')
-    ws = wb.Worksheets("Sheet1")
-    pprint(ws.Cells(1, 1).Borders(1).LineStyle)
-    pprint(ws.Cells(1, 1).Borders(1).Weight)
-    pprint(ws.Cells(1, 1).Borders(1).Color)
-    wb.Close(True)
-    excel.Quit()
